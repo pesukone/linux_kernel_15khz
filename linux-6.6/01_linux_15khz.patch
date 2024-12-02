@@ -1,7 +1,6 @@
-Index: linux-6.6/drivers/gpu/drm/drm_modes.c
-===================================================================
---- linux-6.6.orig/drivers/gpu/drm/drm_modes.c
-+++ linux-6.6/drivers/gpu/drm/drm_modes.c
+diff -urpN linux-6.6.orig/drivers/gpu/drm/drm_modes.c linux-6.6/drivers/gpu/drm/drm_modes.c
+--- linux-6.6.orig/drivers/gpu/drm/drm_modes.c	2024-12-02 16:45:47.586502297 +0200
++++ linux-6.6/drivers/gpu/drm/drm_modes.c	2024-12-02 16:50:04.770801993 +0200
 @@ -48,6 +48,7 @@
  #include <drm/drm_print.h>
  
@@ -53,11 +52,10 @@ Index: linux-6.6/drivers/gpu/drm/drm_modes.c
  		mode = drm_cvt_mode(dev,
  				    cmd->xres, cmd->yres,
  				    cmd->refresh_specified ? cmd->refresh : 60,
-Index: linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.c
-===================================================================
---- /dev/null
-+++ linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.c
-@@ -0,0 +1,155 @@
+diff -urpN linux-6.6.orig/drivers/gpu/drm/drm_modes_low_dotclock.c linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.c
+--- linux-6.6.orig/drivers/gpu/drm/drm_modes_low_dotclock.c	1970-01-01 02:00:00.000000000 +0200
++++ linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.c	2024-12-02 19:40:35.570162114 +0200
+@@ -0,0 +1,160 @@
 +/*
 + * Permission is hereby granted, free of charge, to any person obtaining a
 + * copy of this software and associated documentation files (the "Software"),
@@ -75,8 +73,7 @@ Index: linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.c
 + * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
 + * VA LINUX SYSTEMS AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
 + * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-+ * OTHER DEALINGS IN THE SOFTWARE.
++ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 + */
 +
 +#include <drm/drm_modes.h>
@@ -171,6 +168,12 @@ Index: linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.c
 +		{ DRM_MODE("640x480", DRM_MODE_TYPE_DRIVER,
 +			25452, 640, 664, 760, 808, 0, 480, 491, 493, 525, 0,
 +			DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC) },
++
++
++		/* Switchres: Modeline "384x288_50 15.650000KHz 50.000000Hz" 7.809350 384 400 437 499 288 291 294 313 -hsync -vsync */
++		{ DRM_MODE("384x288_51", DRM_MODE_TYPE_DRIVER,
++			7809, 384, 400, 437, 499, 0, 287, 290, 293, 312, 0,
++			DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC) },
 +};
 +
 +/**
@@ -213,10 +216,10 @@ Index: linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.c
 +	return NULL;
 +}
 +EXPORT_SYMBOL(drm_mode_low_dotclock_res);
-Index: linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.h
-===================================================================
---- /dev/null
-+++ linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.h
+Binary files linux-6.6.orig/drivers/gpu/drm/.drm_modes_low_dotclock.c.swp and linux-6.6/drivers/gpu/drm/.drm_modes_low_dotclock.c.swp differ
+diff -urpN linux-6.6.orig/drivers/gpu/drm/drm_modes_low_dotclock.h linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.h
+--- linux-6.6.orig/drivers/gpu/drm/drm_modes_low_dotclock.h	1970-01-01 02:00:00.000000000 +0200
++++ linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.h	2024-12-02 16:50:04.771801987 +0200
 @@ -0,0 +1,23 @@
 +/*
 + * Permission is hereby granted, free of charge, to any person obtaining a
@@ -241,10 +244,9 @@ Index: linux-6.6/drivers/gpu/drm/drm_modes_low_dotclock.h
 +
 +struct drm_display_mode *drm_mode_low_dotclock_res(struct drm_device *dev,
 +				int hsize, int vsize, bool interlace);
-Index: linux-6.6/drivers/gpu/drm/drm_probe_helper.c
-===================================================================
---- linux-6.6.orig/drivers/gpu/drm/drm_probe_helper.c
-+++ linux-6.6/drivers/gpu/drm/drm_probe_helper.c
+diff -urpN linux-6.6.orig/drivers/gpu/drm/drm_probe_helper.c linux-6.6/drivers/gpu/drm/drm_probe_helper.c
+--- linux-6.6.orig/drivers/gpu/drm/drm_probe_helper.c	2024-12-02 16:45:47.587502290 +0200
++++ linux-6.6/drivers/gpu/drm/drm_probe_helper.c	2024-12-02 16:50:04.771801987 +0200
 @@ -458,21 +458,26 @@ static int __drm_helper_update_and_valid
  		mode_flags |= DRM_MODE_FLAG_3D_MASK;
  
@@ -307,10 +309,20 @@ Index: linux-6.6/drivers/gpu/drm/drm_probe_helper.c
  		count = drm_add_modes_noedid(connector, 1024, 768);
  
  		/*
-Index: linux-6.6/include/drm/drm_connector.h
-===================================================================
---- linux-6.6.orig/include/drm/drm_connector.h
-+++ linux-6.6/include/drm/drm_connector.h
+diff -urpN linux-6.6.orig/drivers/gpu/drm/Makefile linux-6.6/drivers/gpu/drm/Makefile
+--- linux-6.6.orig/drivers/gpu/drm/Makefile	2024-12-02 16:45:47.211505053 +0200
++++ linux-6.6/drivers/gpu/drm/Makefile	2024-12-02 16:50:04.772801981 +0200
+@@ -30,6 +30,7 @@ drm-y := \
+ 	drm_ioctl.o \
+ 	drm_lease.o \
+ 	drm_managed.o \
++	drm_modes_low_dotclock.o \
+ 	drm_mm.o \
+ 	drm_mode_config.o \
+ 	drm_mode_object.o \
+diff -urpN linux-6.6.orig/include/drm/drm_connector.h linux-6.6/include/drm/drm_connector.h
+--- linux-6.6.orig/include/drm/drm_connector.h	2024-12-02 16:45:48.800493380 +0200
++++ linux-6.6/include/drm/drm_connector.h	2024-12-02 16:50:04.772801981 +0200
 @@ -1424,6 +1424,13 @@ struct drm_cmdline_mode {
  	bool interlace;
  
@@ -325,15 +337,3 @@ Index: linux-6.6/include/drm/drm_connector.h
  	 * @cvt:
  	 *
  	 * The timings will be calculated using the VESA Coordinated
-Index: linux-6.6/drivers/gpu/drm/Makefile
-===================================================================
---- linux-6.6.orig/drivers/gpu/drm/Makefile
-+++ linux-6.6/drivers/gpu/drm/Makefile
-@@ -30,6 +30,7 @@ drm-y := \
- 	drm_ioctl.o \
- 	drm_lease.o \
- 	drm_managed.o \
-+	drm_modes_low_dotclock.o \
- 	drm_mm.o \
- 	drm_mode_config.o \
- 	drm_mode_object.o \
